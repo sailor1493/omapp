@@ -18,12 +18,13 @@ void unopt_init(float a, float b, float *vec, int size) {
   }
 }
 
-  void opt_init(float a, float b, float *vec, int size) {
-  #pragma omp parallel
+void opt_init(float a, float b, float *vec, int size) {
+#pragma omp parallel
   {
     float result = heavy_comp(a, b);
+#pragma omp for
     for (int i = 0; i < size; i++) {
       vec[i] = result;
     }
   }
-  }
+}
