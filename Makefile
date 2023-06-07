@@ -1,5 +1,5 @@
 TARGET=main
-OBJECTS=util.o axpy.o
+OBJECTS=util.o work.o
 
 CPPFLAGS=-O2 -Wall -fopenmp
 LDLIBS=-lm -lpthread

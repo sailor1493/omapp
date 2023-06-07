@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "axpy.h"
 #include "util.h"
+#include "work.h"
 
 #define DEFAULT_SIZE 1 << 30
 
@@ -73,32 +73,25 @@ int main(int argc, char **argv) {
 
   printf("Initializing... ");
   fflush(stdout);
-  float *x, *y;
+  float *x;
 
   // Initialize random seed
   timer_init();
 
   // Allocate vectors
   alloc_vec(&x, N);
-  alloc_vec(&y, N);
-
-  // Set each element to a random value
-  rand_vec(x, N);
-  rand_vec(y, N);
-
-  printf("done!\n");
 
   // set function
-  void (*axpy)(float, float *, float *, int) = NULL;
+  void (*axpy)(float, float, float *, int) = NULL;
   switch (mode) {
   case SEQUENTIAL:
-    axpy = sequential_axpy;
+    axpy = vector_init;
     break;
   case UNOPT:
-    axpy = unoptimized_parallel_axpy;
+    axpy = unopt_init;
     break;
   case OPT:
-    axpy = parallel_axpy;
+    axpy = opt_init;
     break;
   default:
     printf("Invalid mode: %d\n", mode);
@@ -106,10 +99,12 @@ int main(int argc, char **argv) {
   }
 
   omp_set_num_threads(num_threads);
+  printf("done!\n");
 
   // WARMUP
   float alpha = 1.0;
-  axpy(alpha, x, y, N);
+  float beta = 2.0;
+  axpy(alpha, beta, x, N);
 
   double elapsed_time_sum = 0;
   for (int i = 0; i < num_iterations; ++i) {
@@ -117,7 +112,7 @@ int main(int argc, char **argv) {
     fflush(stdout);
 
     timer_start(0);
-    axpy(alpha, x, y, N);
+    axpy(alpha, beta, x, N);
 
     double elapsed_time = timer_stop(0);
     printf("%f sec\n", elapsed_time);
