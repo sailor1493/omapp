@@ -1,6 +1,6 @@
 #pragma once
 
-void vector_init(float a, float b, float *vec, int N);
+void init(float a, float b, float *vec, int N);
 
 void unopt_init(float a, float b, float *vec, int N);
 

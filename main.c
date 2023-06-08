@@ -8,7 +8,7 @@
 #include "util.h"
 #include "work.h"
 
-#define DEFAULT_SIZE 1 << 30
+#define DEFAULT_SIZE 1 << 20
 
 static void print_help(const char *prog_name) {
   printf("Usage: %s [-h] [-t num_threads] [-n num_iterations] [-m mode] N\n",
@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
   void (*axpy)(float, float, float *, int) = NULL;
   switch (mode) {
   case SEQUENTIAL:
-    axpy = vector_init;
+    axpy = init;
     break;
   case UNOPT:
     axpy = unopt_init;
